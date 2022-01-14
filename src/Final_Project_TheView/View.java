@@ -2,6 +2,7 @@ package Final_Project_TheView;
 
 import java.util.Vector;
 
+
 import javax.swing.JOptionPane;
 
 import Final_Project_TheListeners.UIEventsListener;
@@ -25,8 +26,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-
+import java.sql.DriverManager;
 import java.sql.*;
+import java.sql.Connection;
 public class View extends Application implements AbstractOlympicView {
 	Scene scene1, scene2, scene3, scene4, scene5, scene6, scene, startOly, endOly;
 	private Vector<UIEventsListener> allListeners;
@@ -39,13 +41,6 @@ public class View extends Application implements AbstractOlympicView {
 		allListeners = new Vector<UIEventsListener>();
 		window = theStage;
 		window.setTitle("Welcome To Corona Olympic 2020");
-		try {
-			Class.forName("com.mysql.jdbc.Driver");
-			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/olympics", "root", "super462");
-			stmt = con.createStatement();
-		} catch (Exception e) {
-			System.out.println(e);
-		}
 
 		// Start olympic scene
 		Label l = new Label("Welcome to Corona Olympic 2020");
@@ -112,7 +107,7 @@ public class View extends Application implements AbstractOlympicView {
 			public void handle(ActionEvent event) {
 				VBox showLayout11 = new VBox(10);
 				showLayout11.setBackground(background);
-				Button MenuButton12 = new Button("Exit");
+				Button MenuButton12 = new Button("");
 				Button MenuButton11 = new Button("Return");
 				MenuButton11.setOnAction(e -> window.setScene(scene));
 				MenuButton12.setOnAction(e -> window.close());
@@ -128,6 +123,8 @@ public class View extends Application implements AbstractOlympicView {
 		});
 		Button exit = new Button("Exit");
 		exit.setOnAction(e -> window.close());
+		Button resetDB = new Button("Reset DB");
+		resetDB.setOnAction(e -> deleteDB(window) );
 		VBox layout = new VBox(20);
 		Image image = new Image("file:boom.jpg");
 		ImageView iv = new ImageView();
@@ -137,7 +134,7 @@ public class View extends Application implements AbstractOlympicView {
 		iv.setPreserveRatio(true);
 		layout.setBackground(background);
 		layout.getChildren().addAll(startDate, iv, addCountry, addAthletes, addStadium, addReferee, addCompitition,
-				showDetails, end, exit, endDate);
+				showDetails, end, exit,resetDB, endDate);
 		layout.setAlignment(Pos.CENTER);
 		scene = new Scene(layout, 600, 600);
 
@@ -182,7 +179,7 @@ public class View extends Application implements AbstractOlympicView {
 
 			@Override
 			public void handle(ActionEvent event) {
-				addAthletes(sportType2.getSelectionModel().getSelectedIndex() + 1, tx2.getText(), c2.getText(),stmt);
+				addAthletes(sportType2.getSelectionModel().getSelectedIndex() + 1, tx2.getText(), c2.getText(),1);
 				tx2.clear();
 				c2.clear();
 				VBox showLayout2 = new VBox(10);
@@ -223,7 +220,7 @@ public class View extends Application implements AbstractOlympicView {
 			public void handle(ActionEvent event) {
 				try {
 					if (seats.getText().isEmpty()) {
-						addStadium(tx3.getText(), c3.getText(), -1);
+						addStadium(tx3.getText(), c3.getText(), -1, 1);
 						tx3.clear();
 						c3.clear();
 						seats.clear();
@@ -240,7 +237,7 @@ public class View extends Application implements AbstractOlympicView {
 						Scene showStadium = new Scene(showLayout3, 600, 600);
 						window.setScene(showStadium);
 					} else {
-						addStadium(tx3.getText(), c3.getText(), Integer.parseInt(seats.getText()));
+						addStadium(tx3.getText(), c3.getText(), Integer.parseInt(seats.getText()), 1);
 						tx3.clear();
 						c3.clear();
 						seats.clear();
@@ -258,7 +255,7 @@ public class View extends Application implements AbstractOlympicView {
 						window.setScene(showStadium);
 					}
 				} catch (NumberFormatException e) {
-					addStadium(tx3.getText(), c3.getText(), -1);
+					addStadium(tx3.getText(), c3.getText(), -1, 1);
 					tx3.clear();
 					c3.clear();
 					seats.clear();
@@ -297,7 +294,7 @@ public class View extends Application implements AbstractOlympicView {
 
 			@Override
 			public void handle(ActionEvent event) {
-				addReferee(tx4.getText(), c4.getText(), sportType4.getSelectionModel().getSelectedIndex() + 1);
+				addReferee(tx4.getText(), c4.getText(), sportType4.getSelectionModel().getSelectedIndex() + 1,1);
 				tx4.clear();
 				c4.clear();
 				VBox showLayout4 = new VBox(10);
@@ -463,6 +460,33 @@ public class View extends Application implements AbstractOlympicView {
 		window.show();
 
 	}
+	
+	public void deleteDB(Stage window) {
+		String query1 = "TRUNCATE table athletes;";
+		String delComp = "drop table competition;";
+		String createComp = "create table competition(\r\n"
+				+ "CID int NOT NULL, RID int NOT NULL,SID int NOT NULL,type int NOT NULL, foreign key(SID) references stadium(SID),foreign key(RID) references referee(RID), primary key(CID));";
+		String query3 = "TRUNCATE table referee;";
+		String query4 = "TRUNCATE table stadium;";
+		String query5 = "TRUNCATE table country;";
+			
+		try {
+		Class.forName("com.mysql.jdbc.Driver");
+		Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/olympics", "root",
+				"root");
+		Statement stmt = con.createStatement();
+		stmt.executeUpdate(query1);
+		stmt.executeUpdate(delComp);
+		stmt.executeUpdate(query3);
+		stmt.executeUpdate(query4);
+		stmt.executeUpdate(query5);
+		stmt.executeUpdate(createComp);
+		System.out.println("Data Base Cleared!");
+		window.close();
+		}catch (Exception e) {
+			System.out.println(e);
+		}
+	}
 
 	@Override
 	public void addCountry(String name) {
@@ -473,21 +497,21 @@ public class View extends Application implements AbstractOlympicView {
 	}
 
 	@Override
-	public void addReferee(String name, String country, int type) {
+	public void addReferee(String name, String country, int type, int RID) {
 		for (UIEventsListener l : allListeners) {
 			l.addRefereeToUI(name, country, type);
 		}
 	}
 
 	@Override
-	public void addStadium(String name, String location, int seats) {
+	public void addStadium(String name, String location, int seats, int SID) {
 		for (UIEventsListener l : allListeners) {
 			l.addStadiumToUI(name, location, seats);
 		}
 	}
 
 	@Override
-	public void addAthletes(int sportType, String name, String country, Statement stmt) {
+	public void addAthletes(int sportType, String name, String country, int AID) {
 		for (UIEventsListener l : allListeners) {
 			l.addAthletesToUI(sportType, name, country);
 		}

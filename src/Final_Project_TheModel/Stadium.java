@@ -4,11 +4,13 @@ public class Stadium {
 	private String name;
 	private String location;
 	private int seats;
+	private int SID;
 
-	public Stadium(String name, String location, int seats) {
+	public Stadium(String name, String location, int seats,int SID) {
 		this.name = name;
 		this.location = location;
 		this.seats = seats;
+		this.SID = SID;
 	}
 
 	public String getName() {
@@ -26,6 +28,10 @@ public class Stadium {
 	@Override
 	public String toString() {
 		return "Stadium Name : " + name + "\nLocation : " + location + "\nNumber Of seats: " + seats + "\n";
+	}
+
+	public int getSID() {
+		return SID;
 	}
 
 }

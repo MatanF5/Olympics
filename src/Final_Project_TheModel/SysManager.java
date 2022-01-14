@@ -4,8 +4,11 @@ import java.util.ArrayList;
 
 import java.util.Random;
 import java.util.Vector;
+
+import javax.xml.bind.annotation.XmlElementDecl.GLOBAL;
+
 import Final_Project_TheListeners.EventsListener;
-import java.sql.DriverManager;
+
 import java.sql.*;
 
 public class SysManager {
@@ -13,39 +16,60 @@ public class SysManager {
 	private ArrayList<Referee> referees = new ArrayList<Referee>();
 	private ArrayList<Stadium> stadiums = new ArrayList<Stadium>();
 	private Vector<EventsListener> listeners;
-	private int athNum = 0;
+	private int AID = 0;
+	private int CID = 0;
+	private int SID = 0;
+	private int RID = 0;
+	private int CID2 = 0;
 
 	public SysManager() {
-		try {
-			Class.forName("com.mysql.jdbc.Driver");
-			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/olympics", "root", "super462");
-			Statement stmt = con.createStatement();
-		} catch (Exception e) {
-			System.out.println(e);
-		}
+
 		listeners = new Vector<EventsListener>();
-		referees.add(new Referee("Avi", 2, "Brazil"));
-		referees.add(new Referee("Haim", 1, "Italy"));
-		referees.add(new Referee("Boten", 3, "Godadelaja"));
-		stadiums.add(new Stadium("sami", "israel", 30));
-		stadiums.add(new Stadium("hatol", "israel", 350));
-		stadiums.add(new Stadium("shmino", "israel", 3077));
-		addCountry("Brazil");
+		// Setting up a default of 3 refs 3 stadiums 3 countries and 3 atheletes.
+		addReferee("Avi", "Brazil", 2);
+		addReferee("Haim","Italy",1);
+		addReferee("Boten","Godadelaja",3);
+		addStadium("sami", "israel", 30);
+		addStadium("shmino", "israel", 3077);
+		addStadium("hatol", "israel", 350);
 		addCountry("England");
 		addCountry("Peru");
-		oly.getAllCountries().get(0).AddAthlete(new Athletes(1, "buzaglo", "Brazil"));
-		oly.getAllCountries().get(1).AddAthlete(new Athletes(1, "messi", "England"));
-		oly.getAllCountries().get(2).AddAthlete(new Athletes(1, "shimon", "Peru"));
+		addCountry("Brazil");
+		addAthletes(1, "buzaglo", "Brazil");
+		addAthletes(1, "messi", "England");
+		addAthletes(1, "Shimon", "Peru");
+
+	
 	}
 
 	public void addReferee(String name, String country, int type) {
 		if (name.isEmpty() || country.isEmpty() || name.startsWith(" ") || country.startsWith(" ")) {
 			fireActionFailed();
 		} else {
-			referees.add(new Referee(name, type, country));
-			// sql connection add to table
-			fireActionCompleted();
+			try {
+				Class.forName("com.mysql.jdbc.Driver");
+				Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/olympics", "root",
+						"root");
+				PreparedStatement stm = con
+						.prepareStatement("INSERT INTO Referee (Name,Type,Country,RID) Values(?,?,?,?)");
+				this.RID++;
+				stm.setString(1, name);
+				stm.setInt(2, type);
+				stm.setString(3, country);
+				stm.setInt(4, RID);
+				try {
+					stm.executeUpdate();
+					System.out.println("Referee Added to DB!");
+				} catch (Exception e) {
+					System.out.println(e);
+				}
+				referees.add(new Referee(name, type, country, RID));
+				fireActionCompleted();
+			} catch (Exception e) {
+				System.out.println(e);
+			}
 		}
+
 	}
 
 	public void addStadium(String name, String location, int seats) {
@@ -53,23 +77,62 @@ public class SysManager {
 				|| String.valueOf(seats).isEmpty()) {
 			fireActionFailed();
 		} else {
-			stadiums.add(new Stadium(name, location, seats));
-			fireActionCompleted();
+			try {
+				Class.forName("com.mysql.jdbc.Driver");
+				Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/olympics", "root",
+						"root");
+				PreparedStatement stm = con
+						.prepareStatement("INSERT INTO Stadium (Name,Seats,Location,SID) Values(?,?,?,?)");
+				this.SID++;
+				stm.setString(1, name);
+				stm.setInt(2, seats);
+				stm.setString(3, location);
+				stm.setInt(4, SID);
+				stadiums.add(new Stadium(name, location, seats, SID));
+				try {
+					stm.executeUpdate();
+					System.out.println("Stadium Added to DB!");
+				} catch (Exception e) {
+					System.out.println(e);
+				}
+				fireActionCompleted();
+			} catch (Exception e) {
+				System.out.println(e);
+			}
 		}
 	}
 
 	public void addCountry(String name) { // Adds A Country To The Olympics
 		boolean check = true;
-		for (Country c : oly.getAllCountries())
-			if (c.getName().equalsIgnoreCase(name))
-				check = false;
-		if (name.isEmpty() || name.startsWith(" "))
-			fireActionFailed();
-		else if (check) {
-			oly.addCountry(new Country(name));
-			fireActionCompleted();
-		} else
-			fireCountrySame();
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/olympics", "root", "root");
+			PreparedStatement stm = con
+					.prepareStatement("INSERT INTO Country (Name,SoloMedals,TeamMedals,CID) Values(?,?,?,?)");
+			for (Country c : oly.getAllCountries())
+				if (c.getName().equalsIgnoreCase(name))
+					check = false;
+			if (name.isEmpty() || name.startsWith(" "))
+				fireActionFailed();
+			else if (check) {
+				oly.addCountry(new Country(name));
+				this.CID++;
+				stm.setString(1, name);
+				stm.setInt(2, 0);
+				stm.setInt(3, 0);
+				stm.setInt(4, CID);
+				try {
+					stm.executeUpdate();
+					System.out.println("Country Added to DB!");
+				} catch (Exception e) {
+					System.out.println(e);
+				}
+				fireActionCompleted();
+			} else
+				fireCountrySame();
+		} catch (Exception e) {
+			System.out.println(e);
+		}
 	}
 
 	public void fireCountrySame() {
@@ -78,25 +141,38 @@ public class SysManager {
 		}
 	}
 
-	public void addAthletes(int sportType, String name, String country, Statement stmt) { // Adds An Athlete To His
-																							// Country
+	public void addAthletes(int sportType, String name, String country) { // Adds An Athlete To His
+		int check = 0; // Country
 		if ((name != null) && (country != null) && (sportType != 0) && (!(name.startsWith(" ")))) {
-			int check = 0;
-			for (Country c : oly.getAllCountries())
-				if (c.getName().equalsIgnoreCase(country)) {
-					Athletes ath = new Athletes(sportType, name, country);
-					c.AddAthlete(ath);
-					this.athNum++;
-					String query = "INSERT INTO athletes (Name,Country,SportsType,AID) Values(" + name + " " + country
-							+ " " + sportType + " " + athNum + ")";
-					try {
-						stmt.executeUpdate(query);
-					} catch (Exception e) {
-						System.out.println(e);
+			try {
+				Class.forName("com.mysql.jdbc.Driver");
+				Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/olympics", "root",
+						"root");
+				for (Country c : oly.getAllCountries())
+					if (c.getName().equalsIgnoreCase(country)) {
+						Athletes ath = new Athletes(sportType, name, country, AID);
+						c.AddAthlete(ath);
+						this.AID++;
+						PreparedStatement stm = con
+								.prepareStatement("INSERT INTO athletes (Name,Country,SportsType,AID) Values(?,?,?,?)");
+						stm.setString(1, name);
+						stm.setString(2, country);
+						stm.setInt(3, sportType);
+						stm.setInt(4, AID);
+
+						try {
+							stm.executeUpdate();
+							System.out.println("Athlete Added to DB!");
+						} catch (Exception e) {
+							System.out.println(e);
+						}
+						fireActionCompleted();
+						check++;
 					}
-					fireActionCompleted();
-					check++;
-				}
+			} catch (Exception e) {
+				System.out.println(e);
+			}
+
 			if (check == 0) {
 				fireActionFailed();
 			}
@@ -118,9 +194,30 @@ public class SysManager {
 					if (c.getNationalRunnerTeam().isEmpty())
 						check = false;
 				if (check) {
-					oly.addCompetition(new RunningCompetition(getReferees().get(refereeIndex), stadiums.get(rand1),
-							type, this.oly)); // Running
-					fireActionCompleted();
+					try {
+						Class.forName("com.mysql.jdbc.Driver");
+						Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/olympics", "root",
+								"root");
+						oly.addCompetition(new RunningCompetition(getReferees().get(refereeIndex), stadiums.get(rand1),
+								type, this.oly)); // Running
+						CID2++;
+						PreparedStatement stm = con
+								.prepareStatement("INSERT INTO competition (CID,RID,SID,type) Values(?,?,?,?)");
+						stm.setInt(1, CID2);
+						stm.setInt(2, getReferees().get(refereeIndex).getRID());
+						stm.setInt(3, stadiums.get(rand1).getSID());
+						stm.setInt(4, compType);
+
+						try {
+							stm.executeUpdate();
+							System.out.println("Competetion Added to DB!");
+						} catch (Exception e) {
+							System.out.println(e);
+						}
+						fireActionCompleted();
+					} catch (Exception e) {
+						System.out.println(e);
+					}
 				} else {
 					fireCountryEmpty();
 				}

@@ -4,11 +4,13 @@ public class Referee {
 	private String name;
 	private int type; // 1 for Runner, 2 for PoleJumper , 3 for PoleRunner
 	private String country;
+	private int RID;
 
-	public Referee(String name, int type, String country) {
+	public Referee(String name, int type, String country, int RID) {
 		this.name = name;
 		this.type = type;
 		this.country = country;
+		this.RID = RID;
 	}
 
 	public String getName() {
@@ -43,6 +45,10 @@ public class Referee {
 			Type = " Both";
 
 		return "Name : " + name + "\nReferee type: " + Type + "\nCountry: " + country + "\n";
+	}
+
+	public int getRID() {
+		return RID;
 	}
 
 }

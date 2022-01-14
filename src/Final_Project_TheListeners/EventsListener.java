@@ -1,5 +1,7 @@
 package Final_Project_TheListeners;
 
+
+
 public interface EventsListener {
 	void fireActionCompleted();
 
@@ -10,4 +12,5 @@ public interface EventsListener {
 	void fireCountrySame();
 
 	void fireEndOlympicsFailed();
+
 }

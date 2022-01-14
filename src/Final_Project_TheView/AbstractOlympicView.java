@@ -1,15 +1,14 @@
 package Final_Project_TheView;
 
-import java.sql.Statement;
 
 import Final_Project_TheListeners.UIEventsListener;
 
 public interface AbstractOlympicView {
 	void addCountry(String name);
 
-	void addReferee(String name, String country, int type);
+	void addReferee(String name, String country, int type, int RID);
 
-	void addStadium(String name, String location, int seats);
+	void addStadium(String name, String location, int seats, int SID);
 
 	void olympicsRankings();
 
@@ -27,6 +26,6 @@ public interface AbstractOlympicView {
 
 	void EndOlympicsFailed(String string);
 
-	void addAthletes(int sportType, String name, String country, Statement stmt);
+	void addAthletes(int sportType, String name, String country, int AID);
 
 }
