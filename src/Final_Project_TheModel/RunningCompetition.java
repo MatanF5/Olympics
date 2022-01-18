@@ -1,5 +1,8 @@
 package Final_Project_TheModel;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
@@ -32,6 +35,17 @@ public class RunningCompetition extends Competition {
 						if (c.getName().equals(check)) {
 							medals--;
 							c.AddMedals(1, medals);
+							try {
+								Class.forName("com.mysql.jdbc.Driver");
+								Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/olympics",
+										"root", "root");
+								PreparedStatement stm = con.prepareStatement(
+										"Update Country SET SoloMedals = "+medals+" WHERE Name = '"+c.getName()+"'");
+
+								stm.executeUpdate();
+							} catch (Exception e) {
+								System.out.println(e);
+							}
 						}
 				}
 			} else {
@@ -47,6 +61,17 @@ public class RunningCompetition extends Competition {
 				for (int i = 0; i < teamRankings.length; i++) {
 					medals--;
 					teamRankings[i].AddMedals(2, medals);
+					try {
+						Class.forName("com.mysql.jdbc.Driver");
+						Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/olympics",
+								"root", "root");
+						PreparedStatement stm = con.prepareStatement(
+								"Update Country SET TeamMedals = "+medals+" WHERE Name = '"+teamRankings[i].getName()+"'");
+
+						stm.executeUpdate();
+					} catch (Exception e) {
+						System.out.println(e);
+					}
 				}
 			}
 		}

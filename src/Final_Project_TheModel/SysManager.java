@@ -27,8 +27,8 @@ public class SysManager {
 		listeners = new Vector<EventsListener>();
 		// Setting up a default of 3 refs 3 stadiums 3 countries and 3 atheletes.
 		addReferee("Avi", "Brazil", 2);
-		addReferee("Haim","Italy",1);
-		addReferee("Boten","Godadelaja",3);
+		addReferee("Haim", "Italy", 1);
+		addReferee("Boten", "Godadelaja", 3);
 		addStadium("sami", "israel", 30);
 		addStadium("shmino", "israel", 3077);
 		addStadium("hatol", "israel", 350);
@@ -39,7 +39,6 @@ public class SysManager {
 		addAthletes(1, "messi", "England");
 		addAthletes(1, "Shimon", "Peru");
 
-	
 	}
 
 	public void addReferee(String name, String country, int type) {
@@ -228,6 +227,29 @@ public class SysManager {
 				if (check) {
 					oly.addCompetition(new JumpingCompetition(getReferees().get(refereeIndex), stadiums.get(rand1),
 							type, this.oly)); // Jumping
+					try {
+						Class.forName("com.mysql.jdbc.Driver");
+						Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/olympics", "root",
+								"root");
+						oly.addCompetition(new RunningCompetition(getReferees().get(refereeIndex), stadiums.get(rand1),
+								type, this.oly)); // Running
+						CID2++;
+						PreparedStatement stm = con
+								.prepareStatement("INSERT INTO competition (CID,RID,SID,type) Values(?,?,?,?)");
+						stm.setInt(1, CID2);
+						stm.setInt(2, getReferees().get(refereeIndex).getRID());
+						stm.setInt(3, stadiums.get(rand1).getSID());
+						stm.setInt(4, compType);
+
+						try {
+							stm.executeUpdate();
+							System.out.println("Competetion Added to DB!");
+						} catch (Exception e) {
+							System.out.println(e);
+						}
+					} catch (Exception e) {
+						System.out.println(e);
+					}
 					fireActionCompleted();
 				} else {
 					fireCountryEmpty();

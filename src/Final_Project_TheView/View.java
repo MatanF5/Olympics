@@ -107,7 +107,7 @@ public class View extends Application implements AbstractOlympicView {
 			public void handle(ActionEvent event) {
 				VBox showLayout11 = new VBox(10);
 				showLayout11.setBackground(background);
-				Button MenuButton12 = new Button("");
+				Button MenuButton12 = new Button("Exit");
 				Button MenuButton11 = new Button("Return");
 				MenuButton11.setOnAction(e -> window.setScene(scene));
 				MenuButton12.setOnAction(e -> window.close());
@@ -122,9 +122,7 @@ public class View extends Application implements AbstractOlympicView {
 			}
 		});
 		Button exit = new Button("Exit");
-		exit.setOnAction(e -> window.close());
-		Button resetDB = new Button("Reset DB");
-		resetDB.setOnAction(e -> deleteDB(window) );
+		exit.setOnAction(e -> deleteDB(window));
 		VBox layout = new VBox(20);
 		Image image = new Image("file:boom.jpg");
 		ImageView iv = new ImageView();
@@ -134,7 +132,7 @@ public class View extends Application implements AbstractOlympicView {
 		iv.setPreserveRatio(true);
 		layout.setBackground(background);
 		layout.getChildren().addAll(startDate, iv, addCountry, addAthletes, addStadium, addReferee, addCompitition,
-				showDetails, end, exit,resetDB, endDate);
+				showDetails, end, exit, endDate);
 		layout.setAlignment(Pos.CENTER);
 		scene = new Scene(layout, 600, 600);
 
