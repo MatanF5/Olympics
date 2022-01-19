@@ -35,9 +35,11 @@ public class SysManager {
 		addCountry("England");
 		addCountry("Peru");
 		addCountry("Brazil");
-		addAthletes(1, "buzaglo", "Brazil");
-		addAthletes(1, "messi", "England");
+		addAthletes(1, "Moshe", "England");
 		addAthletes(1, "Shimon", "Peru");
+		addAthletes(1, "buzaglo", "Brazil");
+
+		
 
 	}
 
@@ -114,7 +116,7 @@ public class SysManager {
 			if (name.isEmpty() || name.startsWith(" "))
 				fireActionFailed();
 			else if (check) {
-				oly.addCountry(new Country(name));
+				oly.addCountry(new Country(name, CID));
 				this.CID++;
 				stm.setString(1, name);
 				stm.setInt(2, 0);
@@ -158,11 +160,40 @@ public class SysManager {
 						stm.setString(2, country);
 						stm.setInt(3, sportType);
 						stm.setInt(4, AID);
+						PreparedStatement stm2;
+						if (sportType == 1) {
+							stm2 = con.prepareStatement("INSERT INTO runteam (AID,Name,CID) Values(?,?,?)");
+							stm2.setInt(1, AID);
+							stm2.setString(2, name);
+							stm2.setInt(3, c.getCID()+1);
+
+						} else if (sportType == 2) {
+							stm2 = con.prepareStatement("INSERT INTO jumpteam (AID,Name,CID) Values(?,?,?)");
+							stm2.setInt(1, AID);
+							stm2.setString(2, name);
+							stm2.setInt(3, c.getCID()+1);
+
+						} else {
+							stm2 = con.prepareStatement("INSERT INTO runteam (AID,Name,CID) Values(?,?,?)");
+							stm2.setInt(1, AID);
+							stm2.setString(2, name);
+							stm2.setInt(3, c.getCID()+1);
+							PreparedStatement stm3 = con
+									.prepareStatement("INSERT INTO jumpteam (AID,Name,CID) Values(?,?,?)");
+							stm3.setInt(1, AID);
+							stm3.setString(2, name);
+							stm3.setInt(3, c.getCID()+1);
+							stm3.executeUpdate();
+
+						}
 
 						try {
 							stm.executeUpdate();
+							stm2.executeUpdate();
 							System.out.println("Athlete Added to DB!");
+							
 						} catch (Exception e) {
+							System.out.println("Meow " + AID);
 							System.out.println(e);
 						}
 						fireActionCompleted();

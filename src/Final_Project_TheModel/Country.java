@@ -8,10 +8,11 @@ public class Country {
 	private int TeamMedals = 0;
 	private ArrayList<Athletes> NationalRunnerTeam = new ArrayList<Athletes>();
 	private ArrayList<Athletes> NationalJumpingTeam = new ArrayList<Athletes>();
+	private int CID;
 
-	public Country(String name) {
+	public Country(String name, int CID) {
 		this.name = name;
-	}
+		this.CID = CID;	}
 
 	public Country() {
 
@@ -74,6 +75,10 @@ public class Country {
 	public String ToString() {
 		return "\nName:" + name + "\nNumber of Solo Medals = " + SoloMedals + "\nNumber Of Team Medals : " + TeamMedals
 				+ "\nTotal Medals Number is :" + getTotalMedals() + "\n";
+	}
+
+	public int getCID() {
+		return CID;
 	}
 
 }

@@ -16,3 +16,7 @@ Name varchar(255) NOT NULL,Seats int NOT NULL, Location varchar(255) NOT NULL,SI
 
 create table competition(
 CID int NOT NULL, RID int NOT NULL,SID int NOT NULL,type int NOT NULL, foreign key(SID) references stadium(SID),foreign key(RID) references referee(RID), primary key(CID));
+
+create table JumpTeam(AID int NOT NULL, Name varchar(255) NOT NULL, CID int NOT NULL, foreign key(CID) references country(CID));
+
+create table RunTeam(AID int NOT NULL, Name varchar(255) NOT NULL, CID int NOT NULL, foreign key(CID) references country(CID));

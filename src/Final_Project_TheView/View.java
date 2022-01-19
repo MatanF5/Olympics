@@ -2,7 +2,6 @@ package Final_Project_TheView;
 
 import java.util.Vector;
 
-
 import javax.swing.JOptionPane;
 
 import Final_Project_TheListeners.UIEventsListener;
@@ -29,6 +28,7 @@ import javafx.stage.Stage;
 import java.sql.DriverManager;
 import java.sql.*;
 import java.sql.Connection;
+
 public class View extends Application implements AbstractOlympicView {
 	Scene scene1, scene2, scene3, scene4, scene5, scene6, scene, startOly, endOly;
 	private Vector<UIEventsListener> allListeners;
@@ -177,7 +177,7 @@ public class View extends Application implements AbstractOlympicView {
 
 			@Override
 			public void handle(ActionEvent event) {
-				addAthletes(sportType2.getSelectionModel().getSelectedIndex() + 1, tx2.getText(), c2.getText(),1);
+				addAthletes(sportType2.getSelectionModel().getSelectedIndex() + 1, tx2.getText(), c2.getText(), 1);
 				tx2.clear();
 				c2.clear();
 				VBox showLayout2 = new VBox(10);
@@ -292,7 +292,7 @@ public class View extends Application implements AbstractOlympicView {
 
 			@Override
 			public void handle(ActionEvent event) {
-				addReferee(tx4.getText(), c4.getText(), sportType4.getSelectionModel().getSelectedIndex() + 1,1);
+				addReferee(tx4.getText(), c4.getText(), sportType4.getSelectionModel().getSelectedIndex() + 1, 1);
 				tx4.clear();
 				c4.clear();
 				VBox showLayout4 = new VBox(10);
@@ -458,7 +458,7 @@ public class View extends Application implements AbstractOlympicView {
 		window.show();
 
 	}
-	
+
 	public void deleteDB(Stage window) {
 		String query1 = "TRUNCATE table athletes;";
 		String delComp = "drop table competition;";
@@ -467,21 +467,28 @@ public class View extends Application implements AbstractOlympicView {
 		String query3 = "TRUNCATE table referee;";
 		String query4 = "TRUNCATE table stadium;";
 		String query5 = "TRUNCATE table country;";
-			
+		String delJump = "drop table jumpteam";
+		String createJump = "create table jumpteam(AID int NOT NULL, Name varchar(255) NOT NULL, CID int NOT NULL, foreign key(CID) references country(CID));";
+		String delRun = "drop table runteam";
+		String createRun = "create table RunTeam(AID int NOT NULL, Name varchar(255) NOT NULL, CID int NOT NULL, foreign key(CID) references country(CID));";
+
 		try {
-		Class.forName("com.mysql.jdbc.Driver");
-		Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/olympics", "root",
-				"root");
-		Statement stmt = con.createStatement();
-		stmt.executeUpdate(query1);
-		stmt.executeUpdate(delComp);
-		stmt.executeUpdate(query3);
-		stmt.executeUpdate(query4);
-		stmt.executeUpdate(query5);
-		stmt.executeUpdate(createComp);
-		System.out.println("Data Base Cleared!");
-		window.close();
-		}catch (Exception e) {
+			Class.forName("com.mysql.jdbc.Driver");
+			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/olympics", "root", "root");
+			Statement stmt = con.createStatement();
+			stmt.executeUpdate(delComp);
+			stmt.executeUpdate(delJump);
+			stmt.executeUpdate(delRun);
+			stmt.executeUpdate(query1);
+			stmt.executeUpdate(query3);
+			stmt.executeUpdate(query4);
+			stmt.executeUpdate(query5);
+			stmt.executeUpdate(createComp);
+			stmt.executeUpdate(createJump);
+			stmt.executeUpdate(createRun);
+			System.out.println("Data Base Cleared!");
+			window.close();
+		} catch (Exception e) {
 			System.out.println(e);
 		}
 	}
