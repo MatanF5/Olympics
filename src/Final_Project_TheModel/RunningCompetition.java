@@ -38,7 +38,7 @@ public class RunningCompetition extends Competition {
 							try {
 								Class.forName("com.mysql.jdbc.Driver");
 								Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/olympics",
-										"root", "super462");
+										"root", "root");
 								PreparedStatement stm = con.prepareStatement(
 										"Update Country SET SoloMedals = "+medals+" WHERE Name = '"+c.getName()+"'");
 
@@ -64,7 +64,7 @@ public class RunningCompetition extends Competition {
 					try {
 						Class.forName("com.mysql.jdbc.Driver");
 						Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/olympics",
-								"root", "super462");
+								"root", "root");
 						PreparedStatement stm = con.prepareStatement(
 								"Update Country SET TeamMedals = "+medals+" WHERE Name = '"+teamRankings[i].getName()+"'");
 
