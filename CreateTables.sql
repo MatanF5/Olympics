@@ -1,12 +1,13 @@
 create schema olympics;
 
-create table athletes(
-Name varchar(255) NOT NULL, Country varchar(255) NOT NULL,SportsType int NOT NULL,
-AID int UNIQUE NOT NULL, PRIMARY KEY (AID));
 
 create table country(
 Name varchar(255) NOT NULL,SoloMedals int NOT NULL,TeamMedals int NOT NULL, 
 CID int UNIQUE NOT NULL, PRIMARY KEY (CID));
+
+create table athletes(
+Name varchar(255) NOT NULL, CID int NOT NULL,SportsType int NOT NULL,
+AID int UNIQUE NOT NULL, PRIMARY KEY (AID), foreign key(CID) references Country(CID));
 
 create table Referee(
 Name varchar(255) NOT NULL,Type int NOT NULL, Country varchar(255) NOT NULL,RID int UNIQUE NOT NULL, PRIMARY KEY (RID));

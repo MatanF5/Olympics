@@ -38,7 +38,6 @@ public class SysManager {
 		addAthletes(1, "Moshe", "England");
 		addAthletes(1, "Shimon", "Peru");
 		addAthletes(1, "buzaglo", "Brazil");
-
 		
 
 	}
@@ -154,10 +153,15 @@ public class SysManager {
 						Athletes ath = new Athletes(sportType, name, country, AID);
 						c.AddAthlete(ath);
 						this.AID++;
+						Statement stCID = con.createStatement();
+						String SCID ="Select CID from Country WHERE Country.Name = '"+country+"'";
+						ResultSet rs = stCID.executeQuery(SCID);
+						rs.next();
+						int cid = rs.getInt("cid");
 						PreparedStatement stm = con
-								.prepareStatement("INSERT INTO athletes (Name,Country,SportsType,AID) Values(?,?,?,?)");
+								.prepareStatement("INSERT INTO athletes (Name,CID,SportsType,AID) Values(?,?,?,?)");
 						stm.setString(1, name);
-						stm.setString(2, country);
+						stm.setInt(2, cid);
 						stm.setInt(3, sportType);
 						stm.setInt(4, AID);
 						PreparedStatement stm2;

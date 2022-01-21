@@ -460,7 +460,10 @@ public class View extends Application implements AbstractOlympicView {
 	}
 
 	public void deleteDB(Stage window) {
-		String query1 = "TRUNCATE table athletes;";
+		String delAth = "drop table athletes;";
+		String createAth = "create table athletes(\r\n"
+				+ "Name varchar(255) NOT NULL, CID int NOT NULL,SportsType int NOT NULL,\r\n"
+				+ "AID int UNIQUE NOT NULL, PRIMARY KEY (AID), foreign key(CID) references Country(CID));";
 		String delComp = "drop table competition;";
 		String createComp = "create table competition(\r\n"
 				+ "CID int NOT NULL, RID int NOT NULL,SID int NOT NULL,type int NOT NULL, foreign key(SID) references stadium(SID),foreign key(RID) references referee(RID), primary key(CID));";
@@ -479,10 +482,11 @@ public class View extends Application implements AbstractOlympicView {
 			stmt.executeUpdate(delComp);
 			stmt.executeUpdate(delJump);
 			stmt.executeUpdate(delRun);
-			stmt.executeUpdate(query1);
+			stmt.executeUpdate(delAth);
 			stmt.executeUpdate(query3);
 			stmt.executeUpdate(query4);
 			stmt.executeUpdate(query5);
+			stmt.executeUpdate(createAth);
 			stmt.executeUpdate(createComp);
 			stmt.executeUpdate(createJump);
 			stmt.executeUpdate(createRun);
