@@ -38,7 +38,6 @@ public class SysManager {
 		addAthletes(1, "Moshe", "England");
 		addAthletes(1, "Shimon", "Peru");
 		addAthletes(1, "buzaglo", "Brazil");
-		
 
 	}
 
@@ -154,7 +153,7 @@ public class SysManager {
 						c.AddAthlete(ath);
 						this.AID++;
 						Statement stCID = con.createStatement();
-						String SCID ="Select CID from Country WHERE Country.Name = '"+country+"'";
+						String SCID = "Select CID from Country WHERE Country.Name = '" + country + "'";
 						ResultSet rs = stCID.executeQuery(SCID);
 						rs.next();
 						int cid = rs.getInt("cid");
@@ -169,24 +168,24 @@ public class SysManager {
 							stm2 = con.prepareStatement("INSERT INTO runteam (AID,Name,CID) Values(?,?,?)");
 							stm2.setInt(1, AID);
 							stm2.setString(2, name);
-							stm2.setInt(3, c.getCID()+1);
+							stm2.setInt(3, c.getCID() + 1);
 
 						} else if (sportType == 2) {
 							stm2 = con.prepareStatement("INSERT INTO jumpteam (AID,Name,CID) Values(?,?,?)");
 							stm2.setInt(1, AID);
 							stm2.setString(2, name);
-							stm2.setInt(3, c.getCID()+1);
+							stm2.setInt(3, c.getCID() + 1);
 
 						} else {
 							stm2 = con.prepareStatement("INSERT INTO runteam (AID,Name,CID) Values(?,?,?)");
 							stm2.setInt(1, AID);
 							stm2.setString(2, name);
-							stm2.setInt(3, c.getCID()+1);
+							stm2.setInt(3, c.getCID() + 1);
 							PreparedStatement stm3 = con
 									.prepareStatement("INSERT INTO jumpteam (AID,Name,CID) Values(?,?,?)");
 							stm3.setInt(1, AID);
 							stm3.setString(2, name);
-							stm3.setInt(3, c.getCID()+1);
+							stm3.setInt(3, c.getCID() + 1);
 							stm3.executeUpdate();
 
 						}
@@ -195,7 +194,7 @@ public class SysManager {
 							stm.executeUpdate();
 							stm2.executeUpdate();
 							System.out.println("Athlete Added to DB!");
-							
+
 						} catch (Exception e) {
 							System.out.println("Meow " + AID);
 							System.out.println(e);
@@ -334,6 +333,25 @@ public class SysManager {
 			sb.append("Country name: " + C.getName() + "\n");
 			sb.append(C.getAtheletsInfo());
 		}
+		try {
+		Class.forName("com.mysql.jdbc.Driver");
+		Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/olympics", "root",
+				"root");
+		Statement stm = con.createStatement();
+		String query = ("SELECT * FROM athletes;");
+		ResultSet rs = stm.executeQuery(query);
+		System.out.println("Country Athletes from DB");
+		while(rs.next()) {
+			String name = rs.getString("Name");
+			int CID = rs.getInt("CID");
+			int sportsType = rs.getInt("sportsType");
+			int AID = rs.getInt("AID");
+			System.out.println("Athelete Name: "+ name + " ID: "+ AID + " SportsType: " + sportsType+ " Country ID: " + CID);
+		}
+		con.close();
+		}catch (Exception e) {
+			System.out.println(e);
+		}
 		return sb.toString();
 
 	}
@@ -373,6 +391,25 @@ public class SysManager {
 		for (Referee r : referees) {
 			sb.append("\n");
 			sb.append(r.toString());
+		}
+		try {
+		Class.forName("com.mysql.jdbc.Driver");
+		Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/olympics", "root",
+				"root");
+		Statement stm = con.createStatement();
+		String query = ("SELECT * FROM referee;");
+		ResultSet rs = stm.executeQuery(query);
+		System.out.println("Referees from DB");
+		while(rs.next()) {
+			String name = rs.getString("Name");
+			int Type = rs.getInt("Type");
+			String Country = rs.getString("Country");
+			int RID = rs.getInt("RID");
+			System.out.println("Referee Name: "+ name + " ID: "+ RID + " Type: " + Type+ " Country: " + Country);
+		}
+		con.close();
+		}catch (Exception e) {
+			System.out.println(e);
 		}
 		return sb.toString();
 

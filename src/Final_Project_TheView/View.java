@@ -466,7 +466,7 @@ public class View extends Application implements AbstractOlympicView {
 				+ "AID int UNIQUE NOT NULL, PRIMARY KEY (AID), foreign key(CID) references Country(CID));";
 		String delComp = "drop table competition;";
 		String createComp = "create table competition(\r\n"
-				+ "CID int NOT NULL, RID int NOT NULL,SID int NOT NULL,type int NOT NULL, foreign key(SID) references stadium(SID),foreign key(RID) references referee(RID), primary key(CID));";
+				+ "CID int NOT NULL, RID int NOT NULL,SID int NOT NULL,type int NOT NULL, foreign key(SID) references stadium(SID),foreign key(RID) references referee(RID), foreign key(CID) references country(CID));";
 		String query3 = "TRUNCATE table referee;";
 		String query4 = "TRUNCATE table stadium;";
 		String query5 = "TRUNCATE table country;";
